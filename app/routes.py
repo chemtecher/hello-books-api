@@ -31,7 +31,7 @@ def handle_books():
 
 
 #Find one book
-@books_bp.route("/<book_id>", methods=["GET"])
+@books_bp.route("/<book_id>", methods=["GET"]) #postman request => url + /books/3 where 3 == book_id
 def handle_book(book_id):
     book_id = int(book_id)
     for book in books:
