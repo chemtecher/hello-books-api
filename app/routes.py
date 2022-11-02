@@ -6,7 +6,6 @@ from flask import Blueprint, jsonify, make_response, request, abort
 books_bp = Blueprint("books", __name__, url_prefix="/books")
 
 
-#Get a single Book
 
 def validate_book(book_id):
     try:
@@ -34,19 +33,19 @@ def create_book():
 
 
 #Read All books
-@books_bp.route("", methods=["GET"])
-def read_all_books():
-    books_response = []
-    books = Book.query.all()
-    for book in books:
-        books_response.append(
-            {
-                "id": book.id,
-                "title": book.title,
-                "description": book.description
-            }
-        )
-    return jsonify(books_response)
+# @books_bp.route("", methods=["GET"])
+# def read_all_books():
+#     books_response = []
+#     books = Book.query.all()
+#     for book in books:
+#         books_response.append(
+#             {
+#                 "id": book.id,
+#                 "title": book.title,
+#                 "description": book.description
+#             }
+#         )
+#     return jsonify(books_response)
 
 @books_bp.route("/<book_id>", methods=["GET"])
 def read_one_book(book_id):
@@ -81,7 +80,28 @@ def delete_book(book_id):
 
     return make_response(f"Book #{book.id} successfully deleted")
 
+# Finding a book by title endpoint
+# Replaced Read All Books endpoint
+@books_bp.route("", methods=["GET"])
+def read_all_books():
+    # this code replaces the previous query all code
+    title_query = request.args.get("title")
+    print(title_query)
+    if title_query:
+        books = Book.query.filter_by(title=title_query)
+    else:
+        books = Book.query.all()
+    # end of the new code
 
+    books_response = []
+    for book in books:
+        books_response.append({
+            "id": book.id,
+            "title": book.title,
+            "description": book.description
+        })
+
+    return jsonify(books_response)
 
 # #Find One Book without Refactoring
 # @books_bp.route("/<book_id>", methods=["GET"]) #postman request => url + /books/3 where 3 == book_id
