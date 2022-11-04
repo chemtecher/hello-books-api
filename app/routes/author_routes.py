@@ -27,3 +27,20 @@ def read_all_authors():
             }
         )
     return jsonify(authors_response)
+
+from app.routes.book_routes import validate_model
+
+@authors_bp.route("/<author_id>/books", methods=["POST"])
+def create_book(author_id):
+
+    author = validate_model(Author, author_id)
+
+    request_body = request.get_json()
+    new_book = Book(
+        title=request_body["title"],
+        description=request_body["description"],
+        author=author
+    )
+    db.session.add(new_book)
+    db.session.commit()
+    return make_response(jsonify(f"Book {new_book.title} by {new_book.author.name} successfully created"), 201)
